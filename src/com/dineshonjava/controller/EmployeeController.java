@@ -34,6 +34,7 @@ public class EmployeeController {
 		employeeService.addEmployee(employee);
 		return new ModelAndView("redirect:/add.html");
 	}
+	
 
 	@RequestMapping(value="/employees", method = RequestMethod.GET)
 	public ModelAndView listEmployees() {
@@ -49,6 +50,8 @@ public class EmployeeController {
 		model.put("employees",  prepareListofBean(employeeService.listEmployeess()));
 		return new ModelAndView("addEmployee", model);
 	}
+	
+	
 	
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView welcome() {
