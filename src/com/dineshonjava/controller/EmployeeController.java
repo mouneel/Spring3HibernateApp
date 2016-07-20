@@ -1,12 +1,18 @@
 package com.dineshonjava.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +47,19 @@ public class EmployeeController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("employees",  prepareListofBean(employeeService.listEmployeess()));
 		return new ModelAndView("employeesList", model);
+	}
+	
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonGenerationException 
+	 */
+	@RequestMapping(value = "/employeeall", method = RequestMethod.GET)
+	public String getAllEmployees(Locale locale, Model model) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		model.addAttribute("employeeList", mapper.writeValueAsString(employeeService.listEmployeess()));
+		return "employeesListNew";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -115,4 +134,5 @@ public class EmployeeController {
 		bean.setId(employee.getEmpId());
 		return bean;
 	}
+	
 }
