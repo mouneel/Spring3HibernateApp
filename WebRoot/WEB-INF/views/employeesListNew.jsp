@@ -23,7 +23,6 @@
 	<spring:url value="/resources/js/jquery.dataTables.js"
 	var="datatable" />
 		<script src="${datatable}"></script>
-	
 </head>
 <body>
 <!-- <div>
