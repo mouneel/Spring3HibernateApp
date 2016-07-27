@@ -110,4 +110,18 @@ public class v1_employee {
 
 		return Response.ok(returnString).build();
 	}
+	
+	@GET
+	@Path("/demo")
+	@Produces(MediaType.TEXT_HTML)
+	public Response returnDemoText() {
+		String message = "<P>Demo - Text</P> <br> ";
+		
+		
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		rb.entity(message);
+		rb.type(MediaType.TEXT_HTML);
+		return rb.build();
+	}
+	
 }
