@@ -1,15 +1,30 @@
 package com.dineshonjava.controller;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.dynamicreports.examples.Templates;
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.Columns;
+import net.sf.dynamicreports.report.builder.component.Components;
+import net.sf.dynamicreports.report.builder.datatype.DataTypes;
+import net.sf.dynamicreports.report.exception.DRException;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dineshonjava.bean.EmployeeBean;
 import com.dineshonjava.model.Employee;
 import com.dineshonjava.service.EmployeeService;
+
 
 /**
  * @author Dinesh Rajput
@@ -61,6 +77,32 @@ public class EmployeeController {
 		model.addAttribute("employeeList", mapper.writeValueAsString(employeeService.listEmployeess()));
 		return "employeesListNew";
 	}
+	
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonGenerationException 
+	 */
+	@RequestMapping(value = "/employeePieChart", method = RequestMethod.GET)
+	public void generatePieChart(HttpServletRequest request, HttpServletResponse response, Locale locale, Model model) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		List<Employee> empList = employeeService.listEmployeess();
+		
+		String fileType = request.getParameter("application/pdf");                 
+		response.setContentType("application/pdf");        
+		OutputStream out = response.getOutputStream();        
+		try {            
+			JasperReportBuilder jrb = build(empList);
+			jrb.toPdf(out);
+			//jrb.toJasperPrint();
+		} catch (DRException e) {            
+			System.out.println("Error: "+e.toString());
+		}        
+		out.close(); 
+	}
+	
+	
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public ModelAndView addEmployee(@ModelAttribute("command")  EmployeeBean employeeBean,
@@ -71,7 +113,18 @@ public class EmployeeController {
 	}
 	
 	
+	private JasperReportBuilder build(List<Employee> empList) { 
+		JasperReportBuilder report = DynamicReports.report(); 
+		report.setTemplate(Templates.reportTemplate); 
+		report.addColumn(Columns.column("empName", "empName", DataTypes.stringType())); 
+		report.addColumn(Columns.column("empAge", "empAge", DataTypes.integerType()));
+		report.addColumn(Columns.column("salary", "salary", DataTypes.longType()));
+		report.addTitle(Components.text("Employee Details"));
+		report.setDataSource(empList);
+		return report;
+	} 
 	
+
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView welcome() {
 		return new ModelAndView("index");

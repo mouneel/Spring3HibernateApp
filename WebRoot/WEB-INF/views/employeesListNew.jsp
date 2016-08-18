@@ -71,11 +71,9 @@
 
 <br>
 
-<div id="showmenu" align="Center" style="border: 1">Filter Options</div>
-<div class="menu"  align="Center"  style="display: none;">
-	Name<br>
-	Age<br>
-	Salary<br>
+<div id="showmenu"  style="align:Center; height:30px; width:200px; overflow: hidden; color:Red; cursor:pointer">Filter Options</div>
+<div class="menu" style="align:Center; height:100px; width:100px; overflow: hidden; overflow-y: scroll">
+	<a href="employeePieChart.html">Pie Chart</a>
 </div>
 
 <br>
@@ -87,6 +85,7 @@
 						<th>EmpAge</th>
 						<th>EmpAddress</th>
 						<th>Salary</th>
+						<th>Delete</th>
 					</tr>
 				</thead>
 				
@@ -96,6 +95,7 @@
 						<th>EmpAge</th>
 						<th>EmpAddress</th>
 						<th>Salary</th>
+						<th>Delete</th>
 		            </tr>
 		        </tfoot>
 			</table>
@@ -111,7 +111,8 @@ $(document).ready(function(){
 		    { "mData": "empName"},
 		    { "mData": "empAge"},
 		    { "mData": "empAddress"},
-		    { "mData": "salary"}
+		    { "mData": "salary"},
+		    { "mData": "empId"}
 		  ],
 		  "paging":true,
 		  
@@ -143,7 +144,20 @@ $(document).ready(function(){
 		            }
 		        },
 		        'colvis'
-		    ]
+		    ],
+	
+	
+	
+			////////////////////////////////////
+			// Delete the Entry in the Table
+			///////////////////////////////////		        
+		        "columnDefs": [ {
+		            "targets": 4,
+		            "data": "EmpId",
+		            "render": function ( data, type, full, meta ) {
+		              return '<a href="employeeDelete.html?empId='+data+'">Delete</a>';
+		            }
+		          } ]
 		  
 		  
 		});
@@ -175,6 +189,9 @@ $(document).ready(function(){
         $('.menu').slideToggle("fast");
 	});
 
+	
+	
+	
 	
 });
 
